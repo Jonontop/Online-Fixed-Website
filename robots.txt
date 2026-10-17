@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://online-fixed.peppy-spice-7122.chatgpt.site/sitemap.xml
