@@ -1,9 +1,21 @@
 name: Update Latest Release JSON
 
+# Rewrites `latest-release.json` — the file the site's download button reads
+# (`app.js` → `loadLatestRelease`) — from this repository's newest published
+# release.
+#
+# The releases here are mirrors of the private app repository's builds; the
+# app repo's `release.yml` creates them with a PAT, which is exactly what
+# fires the `release: published` trigger below (events created by the default
+# GITHUB_TOKEN do not trigger workflows, PAT-created ones do). The
+# `workflow_dispatch` trigger is for re-syncing by hand.
 on:
   release:
     types: [published]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   update-release:
@@ -12,19 +24,37 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch Latest Release
+      - name: Fetch latest release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -H "Authorization: token $GITHUB_TOKEN" \
-               -H "Accept: application/vnd.github.v3+json" \
-               https://api.github.com/repos/${{ github.repository }}/releases/latest \
-               > latest-release.json
+          # -f: fail on HTTP errors instead of committing an error body.
+          gh api "repos/${{ github.repository }}/releases/latest" > latest-release.json
 
-      - name: Commit and Push changes
+      # Trim to the fields the site (and a future in-app feed consumer) uses,
+      # so the committed diff is the version change, not author metadata.
+      - name: Trim to the published contract
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          jq '{
+                tag_name,
+                name,
+                html_url,
+                published_at,
+                body,
+                assets: [.assets[] | {name, size, browser_download_url}]
+              }' latest-release.json > trimmed.json
+          mv trimmed.json latest-release.json
+          cat latest-release.json
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add latest-release.json
-          git commit -m "Auto-update latest-release.json" || exit 0
+          if git diff --cached --quiet; then
+            echo "latest-release.json already up to date."
+            exit 0
+          fi
+          git commit -m "Sync latest-release.json to $(jq -r .tag_name latest-release.json)"
+          git pull --rebase origin main
           git push

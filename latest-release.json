@@ -1,0 +1,24 @@
+{
+  "tag_name": "v1.0.5",
+  "name": "Online-Fixed v1.0.5",
+  "html_url": "https://github.com/Jonontop/Online-Fixed-Website/releases/tag/v1.0.5",
+  "published_at": "2026-10-21T19:54:13Z",
+  "body": "## Distribution build\n\nPublic download mirror for **online-fixed v1.0.5**. The application source and its full release notes live in the private app repository; this release exists so installed copies can check for and download builds without GitHub credentials.\n\n| Asset | Purpose |\n| --- | --- |\n| `online-fixed_1.0.5_x64-setup.exe` | NSIS installer |\n| `online-fixed_1.0.5_x64_en-US.msi` | MSI installer |\n| `SHA256SUMS.txt` | SHA-256 checksums for both installers |\n\nThe in-app updater downloads the setup executable and verifies it against `SHA256SUMS.txt` before offering to run it. Keep this release public: it is the app's update feed.\n",
+  "assets": [
+    {
+      "name": "online-fixed_1.0.5_x64-setup.exe",
+      "size": 3162511,
+      "browser_download_url": "https://github.com/Jonontop/Online-Fixed-Website/releases/download/v1.0.5/online-fixed_1.0.5_x64-setup.exe"
+    },
+    {
+      "name": "online-fixed_1.0.5_x64_en-US.msi",
+      "size": 5177344,
+      "browser_download_url": "https://github.com/Jonontop/Online-Fixed-Website/releases/download/v1.0.5/online-fixed_1.0.5_x64_en-US.msi"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 198,
+      "browser_download_url": "https://github.com/Jonontop/Online-Fixed-Website/releases/download/v1.0.5/SHA256SUMS.txt"
+    }
+  ]
+}
